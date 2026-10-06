@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>일본어 단어 테스트 (3~5강)</title>
+<meta name="description" content="일본어 3강~5강 단어를 5지선다와 직접 쓰기로 연습하는 앱">
+<meta name="theme-color" content="#2E9E5B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="단어테스트">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#E9ECEA; --surface:#FFFFFF; --ink:#1E2328; --muted:#5D686E; --rule:#CDD4D0; --chip:#F2F4F3;
+  --line:#2E9E5B; --line-ink:#FFFFFF; --line-soft:#DDF0E4;
+  --navy:#23395B; --wrong:#C8402E; --wrong-soft:#F8E1DC; --caution:#F2C200; --caution-soft:#FFF5CC;
+  --jp:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo","Noto Sans JP",sans-serif;
+  --kr:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15181B; --surface:#20252A; --ink:#E7EBE9; --muted:#9BA6AC; --rule:#353C42; --chip:#272D32;
+    --line:#47B977; --line-ink:#0D1A12; --line-soft:#1C3527;
+    --navy:#9DB7E0; --wrong:#F07A66; --wrong-soft:#3D2420; --caution:#E8C547; --caution-soft:#33301F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15181B; --surface:#20252A; --ink:#E7EBE9; --muted:#9BA6AC; --rule:#353C42; --chip:#272D32;
+  --line:#47B977; --line-ink:#0D1A12; --line-soft:#1C3527;
+  --navy:#9DB7E0; --wrong:#F07A66; --wrong-soft:#3D2420; --caution:#E8C547; --caution-soft:#33301F;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--kr);font-size:16px;line-height:1.55}
+button,input{font:inherit;color:inherit}
+[lang="ja"],.jp{font-family:var(--jp)}
+:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding:12px 16px 28px}
+ruby{ruby-position:over}
+rt{font-size:.38em;font-weight:400;color:var(--muted);letter-spacing:0}
+
+/* 역 이름판 */
+.sign{background:var(--surface);border-radius:6px;box-shadow:inset 0 0 0 1px var(--rule);text-align:center;padding-top:20px;overflow:hidden;margin-top:6px}
+.sign-kana{font-size:14px;letter-spacing:.35em;padding-left:.35em;color:var(--muted)}
+.sign-kanji{font-weight:700;font-size:clamp(52px,16vw,78px);line-height:1.12;letter-spacing:.08em;padding-left:.08em}
+.sign-kr{font-size:15px;color:var(--muted);margin:6px 16px 16px}
+.sign-stripe{height:14px;background:var(--line)}
+.sign-nb{display:flex;justify-content:space-between;padding:8px 14px 10px;font-size:13px;color:var(--muted)}
+.sign.end .sign-stripe{background:var(--navy)}
+
+.lede{color:var(--muted);font-size:14px;margin:14px 2px 0}
+.field{margin-top:22px}
+.field h2,.sec-h{font-size:15px;font-weight:700;margin:0 0 10px}
+.help{font-size:13px;color:var(--muted);margin:8px 2px 0;line-height:1.5}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:15px;min-height:42px;padding:0 15px;border-radius:999px;border:1.5px solid var(--rule);background:var(--surface);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.segctl{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1.5px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface)}
+.segctl button{min-height:44px;border:0;border-left:1.5px solid var(--rule);background:transparent;cursor:pointer;font-size:15px;padding:0 6px}
+.segctl button:first-child{border-left:0}
+.segctl button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+
+.switch{display:flex;align-items:center;gap:10px;margin-top:20px;font-size:15px;cursor:pointer}
+.switch input{width:22px;height:22px;accent-color:var(--line);margin:0;flex:0 0 auto}
+
+.tip{margin-top:22px;background:var(--caution-soft);border-left:6px solid var(--caution);padding:12px 14px;border-radius:0 6px 6px 0;font-size:14px}
+.tip p{margin:0}
+.tip p+p{margin-top:6px}
+.tip b{font-size:15px}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:22px}
+.btn{min-height:48px;padding:0 18px;border-radius:8px;border:1.5px solid transparent;cursor:pointer;font-weight:600;font-size:16px}
+.btn.big{width:100%;min-height:54px;font-size:17px}
+.btn.sm{min-height:40px;font-size:14px;padding:0 14px}
+.btn.primary{background:var(--line);color:var(--line-ink)}
+.btn.secondary{background:var(--surface);border-color:var(--rule)}
+.btn.ghost{background:transparent;color:var(--muted);text-decoration:underline;text-underline-offset:3px;min-height:44px;font-weight:500}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.startbar{position:sticky;bottom:0;z-index:5;margin:22px -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--rule);display:flex;align-items:center;gap:12px}
+.startbar p{margin:0;font-size:14px;color:var(--muted);flex:1;line-height:1.35}
+.startbar p b{color:var(--ink)}
+.startbar .btn{flex:0 0 auto;min-width:130px;min-height:52px;font-size:17px}
+
+/* 문제 화면 */
+.qbar{display:flex;align-items:center;gap:12px}
+.icon-btn{width:44px;height:44px;display:grid;place-items:center;border-radius:8px;border:1.5px solid var(--rule);background:var(--surface);cursor:pointer;padding:0}
+.icon-btn svg,.say svg{width:20px;height:20px}
+.qcount{font-family:var(--jp);font-size:15px;color:var(--muted)}
+.qcount b{color:var(--ink);font-size:21px}
+.tally{margin-left:auto;display:flex;gap:14px;font-family:var(--jp);font-weight:700;font-size:16px}
+.t-ok{color:var(--line)}
+.t-ng{color:var(--wrong)}
+
+.route{display:flex;align-items:center;overflow-x:auto;padding:14px 10px;margin:2px -10px 0;scrollbar-width:none}
+.route::-webkit-scrollbar{display:none}
+.stop{flex:0 0 auto;width:16px;height:16px;border-radius:50%;border:3px solid var(--line);background:var(--surface)}
+.rail{flex:0 0 14px;height:5px;background:var(--line)}
+.route.fit .rail{flex:1 1 4px}
+.rail.later{background:var(--rule)}
+.stop.later{border-color:var(--rule)}
+.stop.ok{background:var(--line)}
+.stop.ng{background:var(--wrong);border-color:var(--wrong)}
+.stop.now{width:22px;height:22px;border-width:4px;box-shadow:0 0 0 4px var(--line-soft)}
+
+.card{position:relative;background:var(--surface);border-radius:6px;box-shadow:inset 0 0 0 1px var(--rule);overflow:hidden}
+.card-head{display:flex;align-items:center;gap:10px;padding:12px 14px 0}
+.qno{font-family:var(--jp);font-weight:700;font-size:15px;min-width:38px;height:34px;padding:0 4px;display:grid;place-items:center;border:3px solid var(--line);border-radius:6px}
+.dir{font-size:14px;font-weight:500}
+.lesson-tag{margin-left:auto;font-size:13px;color:var(--muted)}
+.card.answered .lesson-tag{visibility:hidden}
+.prompt{padding:18px 16px 16px;min-height:132px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;text-align:center}
+.pm{font-weight:700;line-height:1.3;word-break:keep-all;overflow-wrap:anywhere}
+.pm.xl{font-size:clamp(54px,17vw,84px)}
+.pm.l{font-size:clamp(38px,11.5vw,58px)}
+.pm.m{font-size:clamp(28px,8vw,40px)}
+.pm.s{font-size:clamp(21px,5.8vw,28px)}
+.pm.kr{font-family:var(--kr)}
+.pm.sentence{line-height:2}
+.pm ruby rt{font-size:.36em}
+.prompt-sub{color:var(--muted);font-size:15px}
+.blank{display:inline-block;color:var(--muted);letter-spacing:.05em}
+.mark{color:var(--line);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
+.stripe{height:12px;background:var(--line)}
+.card-foot{display:flex;justify-content:flex-end;padding:6px 10px 8px}
+.card-foot:empty{display:none}
+
+.stamp{position:absolute;top:6px;right:10px;width:58px;height:58px;pointer-events:none;opacity:0;transform:scale(1.6) rotate(-12deg)}
+.stamp.show{animation:stamp .26s cubic-bezier(.2,.9,.3,1.25) forwards}
+.stamp svg{width:100%;height:100%}
+@keyframes stamp{to{opacity:.88;transform:scale(1) rotate(-12deg)}}
+
+.ask{font-weight:700;margin:18px 2px 0;font-size:16px}
+.ask-no{font-family:var(--jp)}
+.choices{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.choice{display:flex;gap:12px;align-items:baseline;width:100%;text-align:left;padding:13px 14px;min-height:52px;background:var(--surface);border:1.5px solid var(--rule);border-radius:10px;cursor:pointer;font-size:17px;line-height:1.5}
+.choice .num{font-family:var(--jp);color:var(--muted);flex:0 0 auto;font-size:18px}
+.choice .c-text{flex:1;word-break:keep-all;overflow-wrap:anywhere}
+.choice .c-text ruby{line-height:1}
+.choice.has-ruby{padding-top:16px}
+.choice:disabled{cursor:default}
+.choice.is-ok{border-color:var(--line);background:var(--line-soft)}
+.choice.is-ok .num{color:var(--line);font-weight:700}
+.choice.is-ng{border-color:var(--wrong);background:var(--wrong-soft)}
+.choice.is-ng .num{color:var(--wrong);font-weight:700}
+.choice.dim{opacity:.5}
+.under{display:flex;justify-content:flex-end;margin-top:4px}
+
+.type-area{margin-top:12px}
+.answer{width:100%;font-size:22px;min-height:58px;padding:10px 14px;border-radius:10px;border:2px solid var(--rule);background:var(--surface)}
+.answer:focus{outline:none;border-color:var(--navy)}
+.answer.is-ok{border-color:var(--line);background:var(--line-soft)}
+.answer.is-ng{border-color:var(--wrong);background:var(--wrong-soft)}
+.conv{min-height:24px;font-size:14px;color:var(--muted);margin:6px 2px 0}
+.conv.warn{color:var(--wrong)}
+.type-btns{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.type-btns .btn.primary{min-width:120px}
+
+.fb{margin-top:16px;padding:14px 14px 16px;background:var(--surface);border-radius:0 6px 6px 0;border-left:6px solid var(--line)}
+.fb.ng{border-left-color:var(--wrong)}
+.fb p{margin:0}
+.fb-head{font-weight:700;font-size:18px}
+.fb.ok .fb-head{color:var(--line)}
+.fb.ng .fb-head{color:var(--wrong)}
+.fb-ans{margin-top:4px!important;font-size:16px}
+.fb-mine{margin-top:2px!important;font-size:14px;color:var(--muted)}
+.fb-hint{margin-top:10px!important;background:var(--caution-soft);border-left:4px solid var(--caution);padding:6px 10px;font-size:14px}
+.fb .btn.sm{margin-top:10px}
+.fb .btn.big{margin-top:14px}
+
+.entry{margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule)}
+.entry-top{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.entry-jp{font-family:var(--jp);font-weight:700;font-size:26px;line-height:1.9}
+.entry-kr{font-size:17px;font-weight:500}
+.entry-note{margin-top:6px!important;font-size:14px;color:var(--muted)}
+.entry-ex{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+.entry-ex li{background:var(--chip);border-radius:6px;padding:6px 10px;display:flex;flex-direction:column}
+.entry-ex .jp{font-size:17px;line-height:2}
+.entry-ex .ex-k{font-size:14px;color:var(--muted)}
+.tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:2px 8px;border-radius:4px;background:var(--chip);color:var(--muted)}
+.tag.ng{background:var(--wrong-soft);color:var(--wrong)}
+.say{width:44px;height:44px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--rule);background:var(--surface);cursor:pointer;padding:0;color:var(--ink)}
+
+/* 결과 */
+.score{text-align:center;margin-top:18px;font-size:18px}
+.score b{font-family:var(--jp);font-size:64px;line-height:1;color:var(--line)}
+.score-note{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.score-msg{text-align:center;color:var(--muted);margin:6px 0 0}
+.sec-h{margin-top:22px}
+.wrong-list{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.mini{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:6px;box-shadow:inset 0 0 0 1px var(--rule);padding:10px 12px}
+.mini-body{flex:1;min-width:0}
+.mini-jp{font-family:var(--jp);font-weight:700;font-size:20px;line-height:1.9}
+.mini-kr{display:block;font-size:15px}
+.mini-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.result-btns{display:grid;gap:8px;margin-top:22px}
+.result-btns .btn.ghost{justify-self:center}
+
+/* 단어장 */
+.topbar{display:flex;align-items:center;gap:6px}
+.topbar .btn.ghost{display:flex;align-items:center;gap:4px;padding:0 8px 0 2px;text-decoration:none;color:var(--ink)}
+.topbar svg{width:20px;height:20px}
+.page-h{font-size:20px;margin:0}
+.list-filters{display:grid;gap:10px;margin-top:12px}
+.search{width:100%;min-height:48px;padding:0 14px;border-radius:8px;border:1.5px solid var(--rule);background:var(--surface);font-size:16px}
+.search:focus{outline:none;border-color:var(--navy)}
+.list-n{font-size:13px;color:var(--muted);margin:14px 2px 6px}
+.wl{list-style:none;padding:0;margin:0;background:var(--surface);border-radius:6px;box-shadow:inset 0 0 0 1px var(--rule)}
+.wl li{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px 8px 12px;border-top:1px solid var(--rule)}
+.wl li:first-child{border-top:0}
+.w-jp{font-family:var(--jp);font-size:18px;line-height:1.9;font-weight:700;word-break:keep-all;overflow-wrap:anywhere}
+.w-jp rt,.mini-jp rt,.entry-jp rt,.choice rt,.entry-ex rt{font-size:.5em}
+.w-kr{font-size:15px;line-height:1.4}
+.w-kr small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.w-kr.reveal{border:1.5px dashed var(--rule);background:var(--chip);border-radius:6px;min-height:40px;color:var(--muted);font-size:13px;cursor:pointer;text-align:center}
+.w-side{display:flex;align-items:center;gap:6px}
+.wbadge{font-family:var(--jp);font-size:12px;font-weight:700;color:var(--wrong);background:var(--wrong-soft);border-radius:4px;padding:1px 6px}
+.empty{color:var(--muted);text-align:center;margin:30px 10px}
+.list-foot{display:flex;justify-content:center;margin-top:16px}
+
+@media (prefers-reduced-motion: reduce){
+  .stamp.show{animation:none;opacity:.88;transform:rotate(-12deg)}
+}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<noscript><p style="padding:20px">이 앱은 자바스크립트가 켜져 있어야 동작해요.</p></noscript>
+<script>
+(function(){
+'use strict';
+
+/* =====================================================================
+   단어 데이터 — 새 단원을 추가할 때는 여기에 줄을 추가하면 돼요.
+   id   : 고유 번호 (오답노트 기록에 쓰여요. 한 번 정하면 바꾸지 마세요)
+   l    : 강 ('3', '4', '5', 'g' = 조사·부사·접속사)
+   jp   : 교과서 표기 (표기가 여러 개면 ' / '로 구분)
+   r    : 읽기 (한자가 들어간 단어만 적어요)
+   kr   : 뜻
+   alt  : 같이 정답으로 인정할 일본어 표기
+   kalt : 같이 정답으로 인정할 한국어 뜻
+   t    : 문법 종류 (p = 조사, a = 부사, c = 접속사)
+   note : 메모
+   ex   : 예문 [{j:'일본어', k:'해석'}]
+          {漢字|かんじ} → 한자 위에 읽기 표시,  【 】 → 빈칸 채우기 문제로 나올 부분
+   ===================================================================== */
+const WORDS = [
+  // ── 3강 ──
+  {id:'3-01', l:'3', jp:'日ようび', r:'にちようび', kr:'일요일', alt:['日曜日']},
+  {id:'3-02', l:'3', jp:'月ようび', r:'げつようび', kr:'월요일', alt:['月曜日']},
+  {id:'3-03', l:'3', jp:'火ようび', r:'かようび', kr:'화요일', alt:['火曜日']},
+  {id:'3-04', l:'3', jp:'水ようび', r:'すいようび', kr:'수요일', alt:['水曜日']},
+  {id:'3-05', l:'3', jp:'木ようび', r:'もくようび', kr:'목요일', alt:['木曜日']},
+  {id:'3-06', l:'3', jp:'金ようび', r:'きんようび', kr:'금요일', alt:['金曜日']},
+  {id:'3-07', l:'3', jp:'土ようび', r:'どようび', kr:'토요일', alt:['土曜日']},
+  {id:'3-08', l:'3', jp:'いつ', kr:'언제'},
+  {id:'3-09', l:'3', jp:'ちょっと', kr:'좀, 잠깐'},
+  {id:'3-10', l:'3', jp:'アルバイト / バイト', kr:'아르바이트'},
+  {id:'3-11', l:'3', jp:'できる', kr:'할 수 있다'},
+  {id:'3-12', l:'3', jp:'じゅく', kr:'학원'},
+  {id:'3-13', l:'3', jp:'～なら', kr:'~(이)라면'},
+  {id:'3-14', l:'3', jp:'テスト', kr:'테스트, 시험'},
+  {id:'3-15', l:'3', jp:'ひっこし', kr:'이사'},
+  {id:'3-16', l:'3', jp:'ともだち', kr:'친구'},
+  {id:'3-17', l:'3', jp:'やくそく', kr:'약속'},
+  {id:'3-18', l:'3', jp:'テーマパーク', kr:'테마파크'},
+  {id:'3-19', l:'3', jp:'おだいば', kr:'오다이바(도쿄)'},
+  {id:'3-20', l:'3', jp:'あらしやま', kr:'아라시야마(교토)'},
+  {id:'3-21', l:'3', jp:'どうとんぼり', kr:'도톤보리(오사카)'},
+  {id:'3-22', l:'3', jp:'夏休み', r:'なつやすみ', kr:'여름 방학, 여름 휴가'},
+  {id:'3-23', l:'3', jp:'たべる', kr:'먹다'},
+  {id:'3-24', l:'3', jp:'みる', kr:'보다'},
+
+  // ── 4강 ──
+  {id:'4-01', l:'4', jp:'下の なまえ', r:'したの なまえ', kr:'(성이 아닌) 이름'},
+  {id:'4-02', l:'4', jp:'おとうさん', kr:'아버지'},
+  {id:'4-03', l:'4', jp:'よぶ', kr:'부르다'},
+  {id:'4-04', l:'4', jp:'父', r:'ちち', kr:'아버지(남에게 말할 때)'},
+  {id:'4-05', l:'4', jp:'しゅうまつ', kr:'주말'},
+  {id:'4-06', l:'4', jp:'あそぶ', kr:'놀다'},
+  {id:'4-07', l:'4', jp:'いもうとさん', kr:'(남의) 여동생'},
+  {id:'4-08', l:'4', jp:'かいもの', kr:'쇼핑, 장보기'},
+  {id:'4-09', l:'4', jp:'おとうとさん', kr:'(남의) 남동생'},
+  {id:'4-10', l:'4', jp:'えいが', kr:'영화'},
+  {id:'4-11', l:'4', jp:'～ちゃん', kr:'~야', note:'이름 뒤에 붙여서 친근하게 부르는 말'},
+  {id:'4-12', l:'4', jp:'ほっかいどう', kr:'홋카이도'},
+  {id:'4-13', l:'4', jp:'おこのみやき', kr:'오코노미야키'},
+  {id:'4-14', l:'4', jp:'こっち / こちら', kr:'이쪽'},
+  {id:'4-15', l:'4', jp:'いっしょに', kr:'같이, 함께'},
+  {id:'4-16', l:'4', jp:'いらっしゃい', kr:'어서 와(요)'},
+  {id:'4-17', l:'4', jp:'うたう', kr:'(노래를) 부르다'},
+  {id:'4-18', l:'4', jp:'おじゃまします', kr:'실례합니다(방문)', note:'남의 집에 들어갈 때 하는 인사'},
+  {id:'4-19', l:'4', jp:'やきゅう', kr:'야구'},
+  {id:'4-20', l:'4', jp:'あがって ください', kr:'올라오세요'},
+  {id:'4-21', l:'4', jp:'アイドル', kr:'아이돌'},
+  {id:'4-22', l:'4', jp:'あのう', kr:'저, 저기(말 걸 때)'},
+  {id:'4-23', l:'4', jp:'グッズ', kr:'상품', kalt:['굿즈']},
+  {id:'4-24', l:'4', jp:'これ', kr:'이것'},
+  {id:'4-25', l:'4', jp:'どうですか', kr:'어떻습니까?'},
+  {id:'4-26', l:'4', jp:'韓国', r:'かんこく', kr:'한국'},
+  {id:'4-27', l:'4', jp:'いい / よい', kr:'좋다'},
+  {id:'4-28', l:'4', jp:'のり', kr:'김'},
+  {id:'4-29', l:'4', jp:'つぎ', kr:'다음'},
+  {id:'4-30', l:'4', jp:'つかれたでしょう', kr:'피곤하죠?'},
+  {id:'4-31', l:'4', jp:'～よ', kr:'~요(설명, 강조)'},
+  {id:'4-32', l:'4', jp:'ありがとうございます', kr:'고맙습니다'},
+  {id:'4-33', l:'4', jp:'うち', kr:'우리'},
+  {id:'4-34', l:'4', jp:'そうですか', kr:'그렇습니까'},
+  {id:'4-35', l:'4', jp:'お母さん', r:'おかあさん', kr:'어머니'},
+  {id:'4-36', l:'4', jp:'来る', r:'くる', kr:'오다'},
+  {id:'4-37', l:'4', jp:'～に にて いるね', kr:'~을/를 닮았네', alt:['ににているね','にているね']},
+  {id:'4-38', l:'4', jp:'ちかてつ', kr:'지하철'},
+  {id:'4-39', l:'4', jp:'わかりました', kr:'알겠습니다'},
+  {id:'4-40', l:'4', jp:'しんかんせん', kr:'신칸센'},
+  {id:'4-41', l:'4', jp:'どこか', kr:'어딘가'},
+  {id:'4-42', l:'4', jp:'タクシー', kr:'택시'},
+  {id:'4-43', l:'4', jp:'ところ', kr:'곳'},
+  {id:'4-44', l:'4', jp:'バス', kr:'버스'},
+  {id:'4-45', l:'4', jp:'オッケー', kr:'OK', kalt:['오케이']},
+  {id:'4-46', l:'4', jp:'これから', kr:'이제부터'},
+  {id:'4-47', l:'4', jp:'どうやって', kr:'어떻게, 어떤 방법으로'},
+  {id:'4-48', l:'4', jp:'こうえん', kr:'공원'},
+  {id:'4-49', l:'4', jp:'えき', kr:'역'},
+  {id:'4-50', l:'4', jp:'サッカー', kr:'축구'},
+  {id:'4-51', l:'4', jp:'電車', r:'でんしゃ', kr:'전철'},
+  {id:'4-52', l:'4', jp:'のりかえる', kr:'갈아타다'},
+  {id:'4-53', l:'4', jp:'あんなに', kr:'저렇게'},
+  {id:'4-54', l:'4', jp:'人', r:'ひと', kr:'사람'},
+  {id:'4-55', l:'4', jp:'ならぶ', kr:'한 줄로 서다, 늘어서다'},
+  {id:'4-56', l:'4', jp:'～て[で] いる', kr:'~하고 있다(진행), ~해져 있다(상태)', alt:['ている','でいる']},
+  {id:'4-57', l:'4', jp:'～て[で] ください', kr:'~해 주세요', alt:['てください','でください']},
+  {id:'4-58', l:'4', jp:'はやく', kr:'빨리'},
+  {id:'4-59', l:'4', jp:'のる', kr:'타다'},
+  {id:'4-60', l:'4', jp:'あの', kr:'저', note:'명사 앞에 붙는 "저 ~" (말을 걸 때는 あのう)'},
+  {id:'4-61', l:'4', jp:'アトラクション', kr:'놀이기구'},
+  {id:'4-62', l:'4', jp:'こわい', kr:'무섭다'},
+  {id:'4-63', l:'4', jp:'～の？', kr:'반말의 의문'},
+  {id:'4-64', l:'4', jp:'ショー', kr:'쇼'},
+  {id:'4-65', l:'4', jp:'ほう', kr:'쪽, 편', note:'～の ほうが: ~쪽이'},
+  {id:'4-66', l:'4', jp:'～のに', kr:'~한데'},
+  {id:'4-67', l:'4', jp:'ふね', kr:'배'},
+  {id:'4-68', l:'4', jp:'ひこうき', kr:'비행기'},
+  {id:'4-69', l:'4', jp:'えいご', kr:'영어'},
+  {id:'4-70', l:'4', jp:'おおきい', kr:'크다'},
+  {id:'4-71', l:'4', jp:'とうきょう', kr:'도쿄'},
+  {id:'4-72', l:'4', jp:'ふくおか', kr:'후쿠오카'},
+  {id:'4-73', l:'4', jp:'きゅうしゅう', kr:'큐슈'},
+  {id:'4-74', l:'4', jp:'プール', kr:'풀장'},
+  {id:'4-75', l:'4', jp:'ケーキ', kr:'케이크'},
+  {id:'4-76', l:'4', jp:'つくる', kr:'만들다'},
+  {id:'4-77', l:'4', jp:'かく', kr:'쓰다'},
+  {id:'4-78', l:'4', jp:'行く', r:'いく', kr:'가다'},
+  {id:'4-79', l:'4', jp:'およぐ', kr:'수영하다'},
+  {id:'4-80', l:'4', jp:'はなす', kr:'말하다'},
+  {id:'4-81', l:'4', jp:'かう', kr:'사다'},
+  {id:'4-82', l:'4', jp:'まつ', kr:'기다리다'},
+  {id:'4-83', l:'4', jp:'はいる', kr:'들어가다, 들어오다', note:'예외 1그룹 동사'},
+  {id:'4-84', l:'4', jp:'かえる', kr:'돌아가다, 돌아오다', note:'예외 1그룹 동사'},
+  {id:'4-85', l:'4', jp:'やすむ', kr:'쉬다'},
+  {id:'4-86', l:'4', jp:'する', kr:'하다'},
+
+  // ── 5강 ──
+  {id:'5-01', l:'5', jp:'かんじ', kr:'한자'},
+  {id:'5-02', l:'5', jp:'よむ', kr:'읽다'},
+  {id:'5-03', l:'5', jp:'ギター', kr:'기타'},
+  {id:'5-04', l:'5', jp:'ひく', kr:'(악기를) 연주하다, 치다, 켜다'},
+  {id:'5-05', l:'5', jp:'スーパー', kr:'슈퍼마켓'},
+  {id:'5-06', l:'5', jp:'じてんしゃ', kr:'자전거'},
+  {id:'5-07', l:'5', jp:'ロボット', kr:'로봇'},
+  {id:'5-08', l:'5', jp:'いる', kr:'(사람·동물 등이) 있다'},
+  {id:'5-09', l:'5', jp:'ニュース', kr:'뉴스'},
+  {id:'5-10', l:'5', jp:'スタジオ', kr:'스튜디오'},
+  {id:'5-11', l:'5', jp:'ばしょ', kr:'장소'},
+  {id:'5-12', l:'5', jp:'きく', kr:'묻다, 듣다'},
+  {id:'5-13', l:'5', jp:'～か', kr:'~인지, ~일지, ~거나'},
+  {id:'5-14', l:'5', jp:'がめん', kr:'화면'},
+  {id:'5-15', l:'5', jp:'タッチ', kr:'터치'},
+  {id:'5-16', l:'5', jp:'話しかける', r:'はなしかける', kr:'말을 걸다'},
+  {id:'5-17', l:'5', jp:'いろいろ', kr:'여러 가지'},
+  {id:'5-18', l:'5', jp:'おしえる', kr:'가르치다'},
+  {id:'5-19', l:'5', jp:'～と おもう', kr:'~라고 생각하다'},
+  {id:'5-20', l:'5', jp:'～けど / けれど', kr:'~(지)만, ~(인)데'},
+  {id:'5-21', l:'5', jp:'てんき', kr:'날씨'},
+  {id:'5-22', l:'5', jp:'おどる', kr:'춤추다'},
+  {id:'5-23', l:'5', jp:'あつい', kr:'덥다'},
+  {id:'5-24', l:'5', jp:'～まつ', kr:'~말', note:'기간의 끝 (월말, 연말의 "말")'},
+  {id:'5-25', l:'5', jp:'あたたかい', kr:'따뜻하다'},
+  {id:'5-26', l:'5', jp:'すずしい', kr:'시원하다'},
+  {id:'5-27', l:'5', jp:'さむい', kr:'춥다'},
+  {id:'5-28', l:'5', jp:'あつさ', kr:'더위'},
+  {id:'5-29', l:'5', jp:'つづく', kr:'계속되다'},
+  {id:'5-30', l:'5', jp:'～みたいだ', kr:'~같다'},
+  {id:'5-31', l:'5', jp:'すごく', kr:'엄청, 굉장히'},
+  {id:'5-32', l:'5', jp:'きんちょう', kr:'긴장'},
+  {id:'5-33', l:'5', jp:'うまく', kr:'잘'},
+  {id:'5-34', l:'5', jp:'有名だ', r:'ゆうめいだ', kr:'유명하다'},
+  {id:'5-35', l:'5', jp:'写真を とる', r:'しゃしんを とる', kr:'사진을 찍다'},
+  {id:'5-36', l:'5', jp:'サイン', kr:'사인'},
+  {id:'5-37', l:'5', jp:'どうでしたか', kr:'어땠습니까?'},
+  {id:'5-38', l:'5', jp:'アニメ', kr:'애니메이션'},
+  {id:'5-39', l:'5', jp:'かりる', kr:'빌리다'},
+  {id:'5-40', l:'5', jp:'はいる', kr:'들어가다'},
+  {id:'5-41', l:'5', jp:'りょうり', kr:'요리'},
+  {id:'5-42', l:'5', jp:'のむ', kr:'마시다'},
+  {id:'5-43', l:'5', jp:'メニュー', kr:'메뉴'},
+  {id:'5-44', l:'5', jp:'しんぶん', kr:'신문'},
+  {id:'5-45', l:'5', jp:'ちゅうごく', kr:'중국'},
+  {id:'5-46', l:'5', jp:'ダンス', kr:'댄스'},
+  {id:'5-47', l:'5', jp:'みなさん', kr:'여러분'},
+  {id:'5-48', l:'5', jp:'からだに 気を つけて ください', r:'からだに きを つけて ください', kr:'몸 조심하세요'},
+  {id:'5-49', l:'5', jp:'かさ', kr:'우산'},
+  {id:'5-50', l:'5', jp:'トイレ', kr:'화장실'},
+  {id:'5-51', l:'5', jp:'ペット', kr:'애완동물'},
+  {id:'5-52', l:'5', jp:'おもしろい', kr:'재미있다'},
+  {id:'5-53', l:'5', jp:'たのしい', kr:'즐겁다'},
+  {id:'5-54', l:'5', jp:'じょうずだ', kr:'능숙하다, 잘하다'},
+  {id:'5-55', l:'5', jp:'好きだ', r:'すきだ', kr:'좋아하다'},
+  {id:'5-56', l:'5', jp:'きらいだ', kr:'싫어하다'},
+  {id:'5-57', l:'5', jp:'りょこう', kr:'여행'},
+  {id:'5-58', l:'5', jp:'せんしゅ', kr:'선수'},
+  {id:'5-59', l:'5', jp:'学校', r:'がっこう', kr:'학교'},
+  {id:'5-60', l:'5', jp:'きょう', kr:'오늘'},
+  {id:'5-61', l:'5', jp:'あした', kr:'내일'},
+
+  // ── 조사·부사·접속사 정리 ──
+  {id:'g-01', l:'g', t:'p', jp:'が', kr:'(주격조사) ~이/가',
+    note:'희망(～が/を ～たい: ~을/를 하고 싶다), 좋고 싫음(～が 好きだ/きらいだ), 능력(～が じょうずだ/へただ)을 말할 때도 が를 써요',
+    ex:[{j:'こちら【が】 {田中|たなか}さんです。', k:'이쪽이 다나카 씨입니다.'}]},
+  {id:'g-02', l:'g', t:'p', jp:'は', kr:'(주격조사) ~은/는', note:'조사일 때는 [wa]로 읽어요',
+    ex:[{j:'わたし【は】 {田中|たなか}です。', k:'나는 다나카입니다.'}]},
+  {id:'g-03', l:'g', t:'p', jp:'を', kr:'(목적격 조사) ~을/를',
+    ex:[{j:'もも【を】 ふたつ ください。', k:'복숭아를 두 개 주세요.'}]},
+  {id:'g-04', l:'g', t:'p', jp:'の', kr:'~의 (명사와 명사 사이)', note:'명사와 명사 사이에서는 해석하지 않을 때도 있어요',
+    ex:[{j:'{日本|にほん}【の】{本|ほん}', k:'일본 책'},{j:'わたし【の】 {本|ほん}です。', k:'나의 책입니다.'}]},
+  {id:'g-05', l:'g', t:'p', jp:'も', kr:'~도',
+    ex:[{j:'わたし【も】 {学生|がくせい}です。', k:'나도 학생입니다.'}]},
+  {id:'g-06', l:'g', t:'p', jp:'と', kr:'~와/과, ~랑, ~하고',
+    ex:[{j:'すし【と】 うどん ください。', k:'스시와 우동 주세요.'}]},
+  {id:'g-07', l:'g', t:'p', jp:'から', kr:'(출발) ~에서, ~부터'},
+  {id:'g-08', l:'g', t:'p', jp:'まで', kr:'(도착) ~까지'},
+  {id:'g-09', l:'g', t:'p', jp:'より', kr:'~보다(비교)',
+    ex:[{j:'{日本語|にほんご}【より】 えいごの ほうが むずかしいです。', k:'일본어보다 영어 쪽이 어렵습니다.'}]},
+  {id:'g-10', l:'g', t:'p', jp:'に', kr:'(위치) ~에, (선택) ~(으)로, (시간·날짜) ~에',
+    note:'～に にる(닮다), ～に のる(타다), ～に のりかえる(갈아타다)처럼 に와 같이 쓰는 동사도 있어요',
+    ex:[{j:'いすの{下|した}【に】 ねこが います。', k:'의자 밑에 고양이가 있습니다.'},
+        {j:'{何|なに}【に】 しますか。', k:'무엇으로 하겠습니까?'},
+        {j:'9{時|じ}【に】', k:'9시에'}]},
+  {id:'g-11', l:'g', t:'a', jp:'あまり', kr:'그다지, 별로',
+    ex:[{j:'すしは 【あまり】 {好|す}きじゃないです。', k:'스시는 별로 좋아하지 않습니다.'}]},
+  {id:'g-12', l:'g', t:'a', jp:'とても', kr:'매우, 아주',
+    ex:[{j:'りんごは 【とても】 おいしい。', k:'사과는 매우 맛있습니다.'}]},
+  {id:'g-13', l:'g', t:'a', jp:'ぜんぜん', kr:'전혀',
+    ex:[{j:'【ぜんぜん】 からくないです。', k:'전혀 맵지 않습니다.'}]},
+  {id:'g-14', l:'g', t:'a', jp:'もう', kr:'벌써, 이미'},
+  {id:'g-15', l:'g', t:'a', jp:'まず', kr:'우선, 먼저'},
+  {id:'g-16', l:'g', t:'c', jp:'でも', kr:'하지만, 그렇지만'},
+  {id:'g-17', l:'g', t:'c', jp:'それから', kr:'그리고'}
+];
+
+/* ===================================================================== */
+const STORE_KEY = 'tango-3to5-v1';
+const LESSONS = [['3','3강'],['4','4강'],['5','5강'],['g','조사·부사·접속사']];
+const LESSON_LABEL = Object.fromEntries(LESSONS);
+const DIRS = [['jk','일본어 → 한국어'],['kj','한국어 → 일본어'],['yomi','한자 읽기'],['kaki','한자 쓰기'],['blank','빈칸 채우기']];
+const DIR_LABEL = Object.fromEntries(DIRS);
+const COUNTS = [['10','10'],['20','20'],['30','30'],['all','전부']];
+const NUMS = ['①','②','③','④','⑤'];
+const ASK = {
+  choice:{jk:'뜻으로 알맞은 것은?', kj:'일본어로 알맞은 것은?', yomi:'한자를 바르게 읽은 것은?', kaki:'한자로 바르게 쓴 것은?', blank:'빈칸에 들어갈 말로 알맞은 것은?'},
+  type:{jk:'뜻을 한국어로 쓰세요.', kj:'일본어로 쓰세요.', yomi:'읽는 법을 히라가나로 쓰세요.', kaki:'한자를 넣어서 쓰세요.', blank:'빈칸에 들어갈 말을 쓰세요.'}
+};
+const TRAP_HINT = {
+  small:'요음(ゃ ゅ ょ)이나 촉음(っ)을 크게 쓴 보기였어요. 작게 써야 해요!',
+  long:'늘이는 소리(장음)가 빠진 보기였어요.',
+  soku:'촉음(っ)이 빠진 보기였어요.'
+};
+const ICON = {
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  speaker:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>'
+};
+
+/* ---------- 글자 처리 ---------- */
+const KANJI_RE = /[\u3400-\u9FFF々]/;
+const hasKanji = w => KANJI_RE.test(w.jp);
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(a){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const variantsOf = jp => jp.split(' / ').map(s=>s.trim()).filter(Boolean);
+function normJ(s){ return String(s).normalize('NFKC').replace(/[\s~～〜‐\-・。、，,.．!！?？「」『』()（）\[\]［］【】]/g,''); }
+function normK(s){ return String(s).normalize('NFC').toLowerCase().replace(/[\s~～〜\-.,!?·…'"“”‘’/]/g,''); }
+function toHira(s){ return s.replace(/[\u30A1-\u30F6]/g, c => String.fromCharCode(c.charCodeAt(0)-0x60)); }
+const SMALL = 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ', LARGE = 'あいうえおつやゆよわアイウエオツヤユヨワ';
+function enlarge(s){ return s.replace(/[ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ]/g, c => LARGE[SMALL.indexOf(c)]); }
+function dropLong(s){
+  if(s.includes('ー')) return s.replace('ー','');
+  let m = s.match(/[おこそとのほもよろごぞどぼぽょゅうくすつぬふむゆるぐずぶぷ]う/);
+  if(m) return s.slice(0,m.index+1) + s.slice(m.index+2);
+  m = s.match(/[えけせてねへめれげぜでべぺ]い/);
+  if(m) return s.slice(0,m.index+1) + s.slice(m.index+2);
+  return s;
+}
+function splitTop(s){
+  const parts=[]; let depth=0, cur='';
+  for(const c of s){
+    if(c==='(') depth++;
+    if(c===')') depth=Math.max(0,depth-1);
+    if(depth===0 && /[,/·]/.test(c)){ parts.push(cur); cur=''; } else cur+=c;
+  }
+  parts.push(cur);
+  return parts.map(x=>x.trim()).filter(Boolean);
+}
+function coreTokens(kr){ return splitTop(kr).map(t => normK(t.replace(/\([^)]*\)/g,''))).filter(Boolean); }
+function korVariants(w){
+  const set = new Set();
+  const add = s => [s.replace(/\([^)]*\)/g,''), s.replace(/[()]/g,'')].forEach(v => { const n=normK(v); if(n) set.add(n); });
+  [w.kr, ...(w.kalt||[])].forEach(src => { add(src); splitTop(src).forEach(add); });
+  return set;
+}
+
+/* 로마자 → 히라가나 */
+const ROMA = (() => {
+  const t = {a:'あ',i:'い',u:'う',e:'え',o:'お'};
+  const rows = {k:'かきくけこ',s:'さしすせそ',t:'たちつてと',n:'なにぬねの',h:'はひふへほ',m:'まみむめも',r:'らりるれろ',g:'がぎぐげご',z:'ざじずぜぞ',d:'だぢづでど',b:'ばびぶべぼ',p:'ぱぴぷぺぽ'};
+  const V='aiueo';
+  for(const c in rows) for(let i=0;i<5;i++) t[c+V[i]] = rows[c][i];
+  Object.assign(t, {ya:'や',yu:'ゆ',yo:'よ',wa:'わ',wo:'を',wi:'うぃ',we:'うぇ',
+    shi:'し',chi:'ち',tsu:'つ',fu:'ふ',ji:'じ',si:'し',ti:'ち',tu:'つ',hu:'ふ',zi:'じ',di:'ぢ',du:'づ',dzu:'づ',
+    fa:'ふぁ',fi:'ふぃ',fe:'ふぇ',fo:'ふぉ',je:'じぇ',she:'しぇ',che:'ちぇ',thi:'てぃ',dhi:'でぃ',
+    xa:'ぁ',xi:'ぃ',xu:'ぅ',xe:'ぇ',xo:'ぉ',la:'ぁ',li:'ぃ',lu:'ぅ',le:'ぇ',lo:'ぉ',
+    xtu:'っ',ltu:'っ',xtsu:'っ',ltsu:'っ',xya:'ゃ',xyu:'ゅ',xyo:'ょ',lya:'ゃ',lyu:'ゅ',lyo:'ょ',xwa:'ゎ',lwa:'ゎ','-':'ー'});
+  const Y = {ky:'き',gy:'ぎ',sy:'し',sh:'し',shy:'し',zy:'じ',jy:'じ',j:'じ',ty:'ち',cy:'ち',ch:'ち',chy:'ち',dy:'ぢ',ny:'に',hy:'ひ',by:'び',py:'ぴ',my:'み',ry:'り'};
+  const SM = {a:'ゃ',u:'ゅ',o:'ょ'};
+  for(const c in Y) for(const v in SM) t[c+v] = Y[c]+SM[v];
+  return t;
+})();
+function romaToHira(src){
+  const s = src.toLowerCase(); let out='', i=0;
+  while(i < s.length){
+    const c = s[i], n1 = s[i+1];
+    if(c==='n'){
+      if(n1==='n'){ const n2=s[i+2]; out+='ん'; i += (n2 && 'aiueoy'.includes(n2)) ? 1 : 2; continue; }
+      if(n1==="'"){ out+='ん'; i+=2; continue; }
+      if(n1===undefined || !'aiueoy'.includes(n1)){ out+='ん'; i++; continue; }
+    }
+    if(n1===c && /[bcdfghjklmpqrstvwxyz]/.test(c)){ out+='っ'; i++; continue; }
+    if(c==='t' && n1==='c' && s[i+2]==='h'){ out+='っ'; i++; continue; }
+    let hit=false;
+    for(let len=4; len>=1; len--){
+      const seg = s.slice(i,i+len);
+      if(seg.length===len && ROMA[seg]){ out+=ROMA[seg]; i+=len; hit=true; break; }
+    }
+    if(!hit){ out+=c; i++; }
+  }
+  return out;
+}
+
+/* 후리가나 */
+function rubyHTML(jp, r){
+  if(!r) return esc(jp);
+  let p=0; while(p<jp.length && p<r.length && jp[p]===r[p] && !KANJI_RE.test(jp[p])) p++;
+  let s=0; while(s<jp.length-p && s<r.length-p && jp[jp.length-1-s]===r[r.length-1-s] && !KANJI_RE.test(jp[jp.length-1-s])) s++;
+  const mid = jp.slice(p, jp.length-s), midR = r.slice(p, r.length-s);
+  if(!mid || !midR || /[\u3040-\u30FF\s]/.test(mid)) return `<ruby>${esc(jp)}<rt>${esc(r)}</rt></ruby>`;
+  return esc(jp.slice(0,p)) + `<ruby>${esc(mid)}<rt>${esc(midR)}</rt></ruby>` + esc(jp.slice(jp.length-s));
+}
+function wordHTML(w){ return w.r ? rubyHTML(w.jp, w.r) : esc(w.jp); }
+function exHTML(j, mode){
+  let h = esc(j).replace(/\{([^|}]+)\|([^}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>');
+  return h.replace(/【([^】]+)】/g, (m,x) => mode==='blank' ? '<span class="blank" aria-label="빈칸">（　　）</span>' : `<span class="mark">${x}</span>`);
+}
+const exPlain = j => j.replace(/\{([^|}]+)\|[^}]+\}/g,'$1').replace(/[【】]/g,'');
+const exSpeech = j => j.replace(/\{([^|}]+)\|([^}]+)\}/g,'$2').replace(/[【】]/g,'');
+
+/* ---------- 단어 분류 ---------- */
+const hasBlankEx = w => !!(w.ex && w.ex.some(e => e.j.includes('【')));
+function dirsFor(w){ const d=['jk','kj']; if(hasKanji(w) && w.r) d.push('yomi','kaki'); if(hasBlankEx(w)) d.push('blank'); return d; }
+const gramGroup = w => w.t==='p' ? 'p' : 'ac';
+function kindOf(w){
+  if(w.l==='g') return 'g-'+gramGroup(w);
+  const s = w.jp.replace(/\s/g,'');
+  if(/^[～~]/.test(s)) return 'suf';
+  if(hasKanji(w)) return 'kanji';
+  if(/^[\u30A0-\u30FF/]+$/.test(s)) return 'kata';
+  return 'hira';
+}
+const wordKey = w => w.jp.replace(/\s/g,'');
+function dedupe(list){ const seen=new Set(); return list.filter(w => { const k=wordKey(w); if(seen.has(k)) return false; seen.add(k); return true; }); }
+const REAL_FORMS = new Set(WORDS.flatMap(w => [...variantsOf(w.jp), w.r, ...(w.alt||[])].filter(Boolean).map(x => toHira(normJ(x)))));
+
+/* ---------- 저장 ---------- */
+function defaults(){ return {lessons:['3','4','5'], kanjiOnly:false, dirs:['jk','kj'], mode:'choice', count:'20', furigana:false}; }
+function sanitize(st){
+  const d = defaults(), o = Object.assign({}, d, (st && typeof st==='object') ? st : {});
+  o.lessons = Array.isArray(o.lessons) ? LESSONS.map(x=>x[0]).filter(x => o.lessons.includes(x)) : d.lessons;
+  if(!o.lessons.length) o.lessons = d.lessons;
+  o.dirs = Array.isArray(o.dirs) ? DIRS.map(x=>x[0]).filter(x => o.dirs.includes(x)) : d.dirs;
+  if(!o.dirs.length) o.dirs = d.dirs;
+  if(!['choice','type'].includes(o.mode)) o.mode = d.mode;
+  o.count = String(o.count); if(!COUNTS.some(c => c[0]===o.count)) o.count = d.count;
+  o.kanjiOnly = !!o.kanjiOnly; o.furigana = !!o.furigana;
+  return o;
+}
+const store = (() => {
+  let o = {};
+  try { o = JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch(e) { o = {}; }
+  return { wrong: (o.wrong && typeof o.wrong==='object') ? o.wrong : {}, settings: sanitize(o.settings) };
+})();
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch(e) {} }
+const wrongCount = id => store.wrong[id] || 0;
+function bumpWrong(id, delta){ const n = (store.wrong[id]||0) + delta; if(n>0) store.wrong[id]=n; else delete store.wrong[id]; save(); }
+const wrongWords = () => dedupe(WORDS.filter(w => store.wrong[w.id] > 0));
+
+/* ---------- 상태 ---------- */
+const S = { screen:'home', quiz:null, list:{lesson:'all', kanjiOnly:false, wrongOnly:false, hide:false, q:'', open:new Set()}, clearArm:false };
+const app = document.getElementById('app');
+const reduceMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function scrollTop(){ try { window.scrollTo(0,0); } catch(e) {} }
+
+/* ---------- 출제 ---------- */
+function buildPool(st){
+  const out=[];
+  for(const w of dedupe(WORDS.filter(w => st.lessons.includes(w.l)))){
+    if(st.kanjiOnly && !hasKanji(w)) continue;
+    const ds = dirsFor(w).filter(d => st.dirs.includes(d));
+    if(ds.length) out.push({w, ds});
+  }
+  return out;
+}
+function choiceText(x, dir){ return dir==='jk' ? x.kr : dir==='yomi' ? x.r : x.jp; }
+function choiceKey(t, dir){ return dir==='jk' ? normK(t) : toHira(normJ(t)); }
+function applicable(x, w, dir){
+  if(dir==='yomi' || dir==='kaki') return hasKanji(x) && !!x.r;
+  if(dir==='blank') return x.l==='g' && gramGroup(x)===gramGroup(w);
+  return true;
+}
+function makeTraps(ans){
+  const out=[];
+  const a=enlarge(ans); if(a!==ans) out.push({text:a, trap:'small'});
+  const b=dropLong(ans); if(b!==ans) out.push({text:b, trap:'long'});
+  const c=ans.replace(/[っッ]/,''); if(c!==ans) out.push({text:c, trap:'soku'});
+  return out;
+}
+function choiceHTML(text, x, q){
+  if(q.dir==='jk') return esc(text);
+  if(q.dir==='kj' && q.furi && x && x.r) return rubyHTML(x.jp, x.r);
+  return esc(text);
+}
+function buildChoices(q, pool){
+  const w=q.w, dir=q.dir;
+  const ansText = choiceText(w, dir);
+  const used = new Set([choiceKey(ansText, dir)]);
+  const wTok = coreTokens(w.kr), wKey = wordKey(w), kind = kindOf(w);
+  const ok = x => x!==w && wordKey(x)!==wKey && applicable(x,w,dir) && !coreTokens(x.kr).some(t => wTok.includes(t));
+  const tiers = [pool.filter(x => ok(x) && kindOf(x)===kind), pool.filter(ok), WORDS.filter(x => ok(x) && kindOf(x)===kind), WORDS.filter(ok)];
+  // 요음·촉음·장음을 노린 보기 (가나로만 된 답일 때)
+  let trap=null;
+  const trapBase = dir==='yomi' ? w.r : (dir==='kj' && !hasKanji(w) && variantsOf(w.jp).length===1) ? w.jp : null;
+  if(trapBase){
+    const cands = shuffle(makeTraps(trapBase)).filter(t => !REAL_FORMS.has(toHira(normJ(t.text))) && !used.has(choiceKey(t.text,dir)));
+    if(cands.length) trap = cands[0];
+  }
+  const need = trap ? 3 : 4;
+  const out = [];
+  for(const tier of tiers){
+    for(const x of shuffle(tier)){
+      if(out.length>=need) break;
+      const t = choiceText(x, dir), k = choiceKey(t, dir);
+      if(used.has(k)) continue;
+      used.add(k); out.push({text:t, w:x, ok:false});
+    }
+    if(out.length>=need) break;
+  }
+  if(trap) out.push({text:trap.text, w:null, ok:false, trap:trap.trap});
+  const all = shuffle([{text:ansText, w, ok:true}, ...out]);
+  all.forEach(c => { c.html = choiceHTML(c.text, c.w, q); c.jp = dir!=='jk'; c.ruby = /<ruby>/.test(c.html); });
+  return all;
+}
+function makeQ(w, dir, st, pool){
+  const q = {w, dir, mode:st.mode, furi:st.furigana, result:null, picked:null, typed:'', hint:'', conv:null, skipped:false, overridden:false};
+  if(dir==='blank') q.ex = pick(w.ex.filter(e => e.j.includes('【')));
+  if(st.mode==='choice') q.choices = buildChoices(q, pool);
+  return q;
+}
+function startQuiz(entries, st, kind){
+  if(!entries.length) return;
+  const n = st.count==='all' ? entries.length : Math.min(+st.count, entries.length);
+  const pool = entries.map(e => e.w);
+  const questions = shuffle(entries).slice(0, n).map(e => makeQ(e.w, pick(e.ds), st, pool));
+  S.quiz = {questions, idx:0, st:Object.assign({}, st), kind, entries, quitEarly:false};
+  S.screen='quiz'; render(); scrollTop();
+}
+function startFromSettings(st){ startQuiz(buildPool(st || store.settings), st || store.settings, 'normal'); }
+function startWrong(){
+  const st = store.settings;
+  const entries = wrongWords().map(w => { let ds = dirsFor(w).filter(d => st.dirs.includes(d)); if(!ds.length) ds=['jk','kj']; return {w, ds}; });
+  startQuiz(entries, Object.assign({}, st, {count:'all'}), 'wrong');
+}
+
+/* ---------- 채점 ---------- */
+function acceptedJP(q){
+  const w=q.w;
+  switch(q.dir){
+    case 'yomi': return [w.r];
+    case 'kaki': return [...variantsOf(w.jp), ...(w.alt||[]).filter(a => KANJI_RE.test(a))];
+    case 'blank': return [w.jp];
+    default: return [...variantsOf(w.jp), w.r, ...(w.alt||[])].filter(Boolean);
+  }
+}
+function grade(q, raw){
+  if(q.dir==='jk') return {ok: korVariants(q.w).has(normK(raw))};
+  const acc = acceptedJP(q).map(normJ);
+  const isRoma = /[a-z]/i.test(raw);
+  const conv = isRoma ? romaToHira(raw) : null;
+  const n = normJ(isRoma ? conv : raw);
+  if(!isRoma && acc.includes(n)) return {ok:true};
+  if(isRoma && acc.some(a => toHira(a)===toHira(n))) return {ok:true, conv};
+  let hint='';
+  if(!isRoma && acc.some(a => toHira(a)===toHira(n))) hint='히라가나와 가타카나를 구분해서 써요.';
+  else if(acc.some(a => enlarge(toHira(a))===enlarge(toHira(n)))) hint='요음(ゃ ゅ ょ)과 촉음(っ)은 작게 써야 해요!';
+  else if(q.dir==='kaki' && acc.some(a => normJ(q.w.r)===n || toHira(normJ(q.w.r))===toHira(n))) hint='읽기는 맞아요. 이 문제는 한자로 써야 해요.';
+  return {ok:false, hint, conv};
+}
+
+/* ---------- 문제 진행 ---------- */
+const curQ = () => S.quiz && S.quiz.questions[S.quiz.idx];
+function record(q){ bumpWrong(q.w.id, q.result==='ok' ? -1 : 1); }
+function answerChoice(i){
+  const q=curQ(); if(!q || q.result || !q.choices[i]) return;
+  q.picked=i; const c=q.choices[i];
+  q.result = c.ok ? 'ok' : 'ng';
+  if(c.trap) q.hint = TRAP_HINT[c.trap];
+  record(q); renderQuiz();
+}
+function checkTyped(){
+  const q=curQ(); if(!q || q.result) return;
+  const inp=document.getElementById('answer'); const v=(inp ? inp.value : '').trim();
+  if(!v){
+    const cv=document.getElementById('conv');
+    if(cv){ cv.textContent='답을 쓰거나 "모르겠어요"를 누르세요.'; cv.classList.add('warn'); }
+    if(inp) inp.focus();
+    return;
+  }
+  q.typed=v;
+  const g=grade(q, v);
+  q.result = g.ok ? 'ok' : 'ng'; q.hint = g.hint || ''; q.conv = g.conv || null;
+  record(q); renderQuiz();
+}
+function skip(){ const q=curQ(); if(!q || q.result) return; q.result='ng'; q.skipped=true; record(q); renderQuiz(); }
+function override(){ const q=curQ(); if(!q || q.result!=='ng' || q.skipped) return; q.result='ok'; q.overridden=true; q.hint=''; bumpWrong(q.w.id, -2); renderQuiz(); }
+function next(){
+  const Z=S.quiz; if(!Z) return;
+  if(Z.idx < Z.questions.length-1){ Z.idx++; renderQuiz(); scrollTop(); }
+  else { S.screen='result'; render(); scrollTop(); }
+}
+function quit(){
+  const Z=S.quiz; if(!Z) return;
+  if(!Z.questions.some(q => q.result)){ S.screen='home'; render(); scrollTop(); return; }
+  Z.quitEarly = Z.questions.some(q => !q.result);
+  S.screen='result'; render(); scrollTop();
+}
+function retryWrong(){
+  const Z=S.quiz; if(!Z) return;
+  const seen=new Set(), entries=[];
+  Z.questions.filter(q => q.result==='ng').forEach(q => {
+    if(seen.has(q.w.id)) return; seen.add(q.w.id);
+    let ds = dirsFor(q.w).filter(d => Z.st.dirs.includes(d)); if(!ds.length) ds=[q.dir];
+    entries.push({w:q.w, ds});
+  });
+  startQuiz(entries, Object.assign({}, Z.st, {count:'all'}), 'retry');
+}
+function again(){
+  const Z=S.quiz; if(!Z) return;
+  if(Z.kind==='wrong'){ if(wrongWords().length) startWrong(); else { S.screen='home'; render(); scrollTop(); } }
+  else if(Z.kind==='retry') startQuiz(Z.entries, Z.st, 'retry');
+  else startFromSettings(Z.st);
+}
+
+/* ---------- 발음 ---------- */
+const canSpeak = typeof window!=='undefined' && 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance==='function';
+function speechText(w){
+  if(w.l==='g' && w.ex && w.ex.length) return exSpeech(w.ex[0].j);
+  return (w.r || variantsOf(w.jp)[0]).replace(/[～~〜]/g,'').replace(/\[[^\]]*\]/g,'');
+}
+function sayWord(id){
+  const w = WORDS.find(x => x.id===id); if(!w || !canSpeak) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(speechText(w));
+    u.lang='ja-JP'; u.rate=0.9;
+    const v = speechSynthesis.getVoices().find(v => /^ja[-_]/i.test(v.lang));
+    if(v) u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+const sayBtn = w => canSpeak ? `<button class="say" data-act="say" data-v="${w.id}" aria-label="${esc(exPlain(variantsOf(w.jp)[0]))} 발음 듣기">${ICON.speaker}</button>` : '';
+
+/* ---------- 화면: 공통 ---------- */
+function signHTML(kana, kanji, kr, nb, cls){
+  return `<header class="sign ${cls||''}">
+    <div class="sign-kana" lang="ja">${kana}</div>
+    <div class="sign-kanji" lang="ja">${kanji}</div>
+    <div class="sign-kr">${kr}</div>
+    <div class="sign-stripe"></div>
+    ${nb ? `<div class="sign-nb" lang="ja"><span>◀ ${nb[0]}</span><span>${nb[1]} ▶</span></div>` : '<div style="height:10px"></div>'}
+  </header>`;
+}
+const chip = (act, v, label, on) => `<button class="chip" data-act="${act}" data-v="${v}" aria-pressed="${on}">${label}</button>`;
+const segCtl = (act, opts, cur, label) => `<div class="segctl" role="group" aria-label="${label}">${opts.map(([v,l]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${v===cur}">${l}</button>`).join('')}</div>`;
+function routeHTML(qs, cur){
+  const fit = qs.length <= 20;
+  let h = `<div class="route${fit?' fit':''}" id="route" aria-hidden="true">`;
+  qs.forEach((q,i) => {
+    const later = cur>=0 && i>cur;
+    if(i>0) h += `<span class="rail${later?' later':''}"></span>`;
+    const r = q.result==='ok' ? ' ok' : q.result==='ng' ? ' ng' : '';
+    h += `<span class="stop${r}${i===cur?' now':''}${later?' later':''}"></span>`;
+  });
+  return h + '</div>';
+}
+function entryHTML(w){
+  const wc = wrongCount(w.id);
+  return `<div class="entry">
+    <div class="entry-top"><span class="entry-jp" lang="ja">${wordHTML(w)}</span>${sayBtn(w)}</div>
+    <div class="entry-kr">${esc(w.kr)}</div>
+    ${w.note ? `<p class="entry-note">${esc(w.note)}</p>` : ''}
+    ${w.ex ? `<ul class="entry-ex">${w.ex.map(e => `<li><span class="jp" lang="ja">${exHTML(e.j,'mark')}</span><span class="ex-k">${esc(e.k)}</span></li>`).join('')}</ul>` : ''}
+    <div class="tags"><span class="tag">${LESSON_LABEL[w.l]}</span>${wc ? `<span class="tag ng">오답노트 ${wc}회</span>` : ''}</div>
+  </div>`;
+}
+
+/* ---------- 화면: 처음 ---------- */
+function renderHome(){
+  const st = store.settings, pool = buildPool(st);
+  const all = dedupe(WORDS), kanjiN = all.filter(hasKanji).length;
+  const wn = wrongWords().length;
+  const qn = st.count==='all' ? pool.length : Math.min(+st.count, pool.length);
+  app.innerHTML = `
+  ${signHTML('たんご','単語','일본어 단어 테스트',['にほんご','かんこくご'])}
+  <p class="lede">3강부터 5강까지 단어 ${all.length}개, 그중 한자가 들어간 단어 ${kanjiN}개. 문제 순서와 보기는 시험 볼 때마다 새로 섞여요.</p>
+  <section class="field"><h2>범위</h2><div class="chips" role="group" aria-label="범위">${LESSONS.map(([id,l]) => chip('lesson', id, l, st.lessons.includes(id))).join('')}</div></section>
+  <section class="field"><h2>단어</h2>${segCtl('kanji', [['all','모든 단어'],['kanji','한자 단어만']], st.kanjiOnly?'kanji':'all', '단어 종류')}</section>
+  <section class="field"><h2>출제 방향</h2><div class="chips" role="group" aria-label="출제 방향">${DIRS.map(([id,l]) => chip('dir', id, l, st.dirs.includes(id))).join('')}</div>
+    <p class="help">여러 개 고르면 문제마다 섞여서 나와요. 한자 읽기와 한자 쓰기는 한자 단어에서, 빈칸 채우기는 조사·부사 예문에서 나와요.</p></section>
+  <section class="field"><h2>풀이 방식</h2>${segCtl('mode', [['choice','5지선다'],['type','직접 쓰기']], st.mode, '풀이 방식')}</section>
+  <section class="field"><h2>문제 수</h2>${segCtl('count', COUNTS, st.count, '문제 수')}</section>
+  <label class="switch"><input type="checkbox" data-act="furigana" ${st.furigana?'checked':''}><span>문제에 나온 한자 위에 읽기 달기</span></label>
+  <aside class="tip">
+    <p><b>요음·촉음은 작게!</b></p>
+    <p>ゃ ゅ ょ っ 를 크게 쓰면 틀려요. 5지선다에도 이걸 노린 보기가 섞여 나와요.</p>
+    ${st.mode==='type' ? '<p>일본어 키보드가 없으면 로마자로 쳐도 돼요. densha는 でんしゃ, kyuushuu는 きゅうしゅう로 바꿔서 채점해요.</p>' : ''}
+  </aside>
+  <div class="row2">
+    <button class="btn secondary" data-act="start-wrong" ${wn?'':'disabled'}>${wn ? `오답노트 시험 (${wn})` : '오답노트 비어 있음'}</button>
+    <button class="btn secondary" data-act="open-list">단어장</button>
+  </div>
+  <div class="startbar">
+    <p>${pool.length ? `단어 <b>${pool.length}개</b> 중 <b>${qn}문제</b>` : '조건에 맞는 단어가 없어요. 범위나 출제 방향을 바꿔 보세요.'}</p>
+    <button class="btn primary" data-act="start" ${pool.length?'':'disabled'}>시험 시작</button>
+  </div>`;
+}
+
+/* ---------- 화면: 문제 ---------- */
+function promptParts(q){
+  const w=q.w, done=!!q.result;
+  const len = s => exPlain(s).replace(/[\s【】]/g,'').length;
+  const size = (s, kr) => { const L=len(s); const c = L<=3?'xl':L<=6?'l':L<=10?'m':'s'; return kr && c==='xl' ? 'l' : c; };
+  switch(q.dir){
+    case 'jk':  return {main: q.furi && w.r ? rubyHTML(w.jp, w.r) : esc(w.jp), cls:'jp '+size(w.jp), lang:'ja', say:true};
+    case 'kj':  return {main: esc(w.kr), cls:'kr '+size(w.kr, true), lang:'ko'};
+    case 'yomi':return {main: done ? rubyHTML(w.jp, w.r) : esc(w.jp), cls:'jp '+size(w.jp), lang:'ja'};
+    case 'kaki':return {main: esc(w.r), cls:'jp '+size(w.r), lang:'ja', sub: esc(w.kr)};
+    case 'blank':return {main: exHTML(q.ex.j, done?'mark':'blank'), cls:'jp sentence '+size(q.ex.j), lang:'ja', sub: esc(q.ex.k)};
+  }
+}
+function stampHTML(ok){
+  const color = ok ? 'var(--line)' : 'var(--wrong)';
+  const shape = ok
+    ? `<circle cx="50" cy="50" r="38" fill="none" stroke="${color}" stroke-width="9"/>`
+    : `<path d="M22 22L78 78M78 22L22 78" stroke="${color}" stroke-width="11" stroke-linecap="round"/>`;
+  return `<div class="stamp show" aria-hidden="true"><svg viewBox="0 0 100 100">${shape}</svg></div>`;
+}
+function choicesHTML(q){
+  const done=!!q.result;
+  return `<ol class="choices">${q.choices.map((c,i) => {
+    let cls='choice' + (c.ruby?' has-ruby':'');
+    if(done){ if(c.ok) cls+=' is-ok'; else if(q.picked===i) cls+=' is-ng'; else cls+=' dim'; }
+    return `<li><button class="${cls}" data-act="choose" data-v="${i}" ${done?'disabled':''}><span class="num" aria-hidden="true">${NUMS[i]}</span><span class="c-text${c.jp?' jp':''}"${c.jp?' lang="ja"':''}>${c.html}</span></button></li>`;
+  }).join('')}</ol>
+  ${done ? '' : '<div class="under"><button class="btn ghost" data-act="skip">모르겠어요</button></div>'}`;
+}
+function typeHTML(q){
+  const done=!!q.result, isK=q.dir==='jk';
+  const ph = isK ? '뜻 입력' : q.dir==='kaki' ? '한자로 입력' : '일본어 입력 (로마자도 돼요)';
+  return `<div class="type-area">
+    <input id="answer" class="answer${done ? (q.result==='ok'?' is-ok':' is-ng') : ''}" type="text" lang="${isK?'ko':'ja'}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="${ph}" value="${esc(q.typed)}" ${done?'disabled':''} aria-label="답 입력">
+    <div class="conv" id="conv" aria-live="polite"></div>
+    ${done ? '' : '<div class="type-btns"><button class="btn ghost" data-act="skip">모르겠어요</button><button class="btn primary" data-act="check">확인</button></div>'}
+  </div>`;
+}
+function answerHTML(q){
+  const w=q.w;
+  if(q.mode==='choice'){ const i=q.choices.findIndex(c => c.ok); const c=q.choices[i]; return `${NUMS[i]} <span${c.jp?' lang="ja"':''}>${c.html}</span>`; }
+  switch(q.dir){
+    case 'jk': return esc(w.kr);
+    case 'yomi': return `<span lang="ja">${esc(w.r)}</span>`;
+    case 'kaki': case 'blank': return `<span lang="ja">${esc(w.jp)}</span>`;
+    default: return `<span lang="ja">${wordHTML(w)}</span>`;
+  }
+}
+function feedbackHTML(q, isLast){
+  const ok = q.result==='ok';
+  const head = ok ? (q.overridden ? '정답으로 바꿨어요' : '정답!') : (q.skipped ? '정답을 확인하세요' : '틀렸어요');
+  let body = '';
+  if(!ok){
+    body += `<p class="fb-ans">정답은 <b>${answerHTML(q)}</b></p>`;
+    if(q.mode==='type' && !q.skipped) body += `<p class="fb-mine">내 답: <span${q.dir==='jk'?'':' lang="ja"'}>${esc(q.typed)}</span>${q.conv ? ` (<span lang="ja">${esc(q.conv)}</span>)` : ''}</p>`;
+  } else if(q.mode==='type' && q.conv){
+    body += `<p class="fb-mine">로마자 변환: <span lang="ja">${esc(q.conv)}</span></p>`;
+  }
+  if(q.hint) body += `<p class="fb-hint">${esc(q.hint)}</p>`;
+  if(!ok && q.mode==='type' && q.dir==='jk' && !q.skipped) body += '<button class="btn secondary sm" data-act="override">내 답도 맞아요</button>';
+  return `<section class="fb ${ok?'ok':'ng'}" id="fb">
+    <p class="fb-head">${head}</p>${body}
+    ${entryHTML(q.w)}
+    <button class="btn primary big" data-act="next">${isLast ? '결과 보기' : '<span lang="ja">つぎ</span> 다음 문제'}</button>
+  </section>`;
+}
+function renderQuiz(){
+  const Z=S.quiz, q=Z.questions[Z.idx], n=Z.questions.length;
+  const okN = Z.questions.filter(x => x.result==='ok').length, ngN = Z.questions.filter(x => x.result==='ng').length;
+  const P = promptParts(q);
+  app.innerHTML = `
+  <div class="qbar">
+    <button class="icon-btn" data-act="quit" aria-label="그만하고 결과 보기">${ICON.close}</button>
+    <div class="qcount"><b>${Z.idx+1}</b> / ${n}</div>
+    <div class="tally"><span class="t-ok" aria-label="맞힌 문제 ${okN}개">◯ ${okN}</span><span class="t-ng" aria-label="틀린 문제 ${ngN}개">✗ ${ngN}</span></div>
+  </div>
+  ${routeHTML(Z.questions, Z.idx)}
+  <article class="card${q.result?' answered':''}">
+    <div class="card-head"><span class="qno" lang="ja">${String(Z.idx+1).padStart(2,'0')}</span><span class="dir">${DIR_LABEL[q.dir]}</span><span class="lesson-tag">${LESSON_LABEL[q.w.l]}</span></div>
+    <div class="prompt">
+      <div class="pm ${P.cls}" lang="${P.lang}">${P.main}</div>
+      ${P.sub ? `<div class="prompt-sub">${P.sub}</div>` : ''}
+    </div>
+    <div class="stripe"></div>
+    <div class="card-foot">${P.say ? sayBtn(q.w) : ''}</div>
+    ${q.result ? stampHTML(q.result==='ok') : ''}
+  </article>
+  <p class="ask"><span class="ask-no">${Z.idx+1}.</span> ${ASK[q.mode][q.dir]}</p>
+  ${q.mode==='choice' ? choicesHTML(q) : typeHTML(q)}
+  ${q.result ? feedbackHTML(q, Z.idx===n-1) : ''}`;
+  const route=document.getElementById('route'), now=route && route.querySelector('.now');
+  if(route && now && !route.classList.contains('fit')) route.scrollLeft = now.offsetLeft - route.clientWidth/2;
+  if(q.result){
+    const fb=document.getElementById('fb'), nb=app.querySelector('[data-act="next"]');
+    if(fb && typeof fb.scrollIntoView==='function') fb.scrollIntoView({behavior: reduceMotion()?'auto':'smooth', block:'nearest'});
+    if(nb) nb.focus({preventScroll:true});
+  } else if(q.mode==='type'){
+    const inp=document.getElementById('answer'); if(inp) inp.focus({preventScroll:true});
+  }
+}
+
+/* ---------- 화면: 결과 ---------- */
+function miniHTML(q){
+  const w=q.w; let mine='';
+  if(q.mode==='choice' && q.picked!=null) mine = `<span class="tag">고른 답 ${NUMS[q.picked]} <span${q.choices[q.picked].jp?' lang="ja"':''}>${q.choices[q.picked].html}</span></span>`;
+  else if(q.mode==='type' && !q.skipped) mine = `<span class="tag">내 답 ${esc(q.typed)}</span>`;
+  else if(q.skipped) mine = '<span class="tag">모르겠어요</span>';
+  return `<div class="mini"><div class="mini-body">
+    <span class="mini-jp" lang="ja">${wordHTML(w)}</span><span class="mini-kr">${esc(w.kr)}</span>
+    <span class="mini-meta"><span class="tag">${DIR_LABEL[q.dir]}</span>${mine}</span>
+  </div>${sayBtn(w)}</div>`;
+}
+function renderResult(){
+  const Z=S.quiz, done=Z.questions.filter(q => q.result), n=done.length;
+  const ok = done.filter(q => q.result==='ok').length, score = n ? Math.round(ok/n*100) : 0;
+  const wrong = done.filter(q => q.result==='ng');
+  const msg = score===100 ? '전부 맞혔어요.' : score>=80 ? '거의 다 왔어요. 틀린 것만 한 번 더 풀어 보세요.' : score>=50 ? '틀린 단어는 오답노트에 모아 뒀어요.' : '단어장으로 한 번 훑어보고 다시 풀어 보세요.';
+  app.innerHTML = `
+  ${signHTML('しゅうてん','終点',`${n}문제 중 ${ok}개 맞혔어요`, null, 'end')}
+  <div class="score"><b>${score}</b>점${Z.quitEarly ? '<span class="score-note">중간에 그만둔 시험이라 푼 문제만 채점했어요.</span>' : ''}</div>
+  <p class="score-msg">${msg}</p>
+  ${routeHTML(done, -1)}
+  ${wrong.length ? `<h2 class="sec-h">틀린 문제 ${wrong.length}개</h2><ul class="wrong-list">${wrong.map(q => `<li>${miniHTML(q)}</li>`).join('')}</ul>` : ''}
+  <div class="result-btns">
+    ${wrong.length ? '<button class="btn primary big" data-act="retry-wrong">틀린 것만 다시 풀기</button>' : ''}
+    <button class="btn ${wrong.length?'secondary':'primary'} big" data-act="again">같은 조건으로 새로 섞어서 풀기</button>
+    <button class="btn ghost" data-act="home">처음으로</button>
+  </div>`;
+  const route=document.getElementById('route'); if(route) route.scrollLeft=0;
+}
+
+/* ---------- 화면: 단어장 ---------- */
+function renderList(){
+  const L=S.list;
+  app.innerHTML = `
+  <div class="topbar"><button class="btn ghost" data-act="home">${ICON.back}처음으로</button><h1 class="page-h">단어장</h1></div>
+  <div class="list-filters">
+    <div class="chips" role="group" aria-label="범위">${[['all','전체'], ...LESSONS].map(([id,l]) => chip('l-lesson', id, l, L.lesson===id)).join('')}</div>
+    <div class="chips" role="group" aria-label="보기 설정">${chip('l-kanji','1','한자 단어만',L.kanjiOnly)}${chip('l-wrong','1','오답노트만',L.wrongOnly)}${chip('l-hide','1','뜻 가리기',L.hide)}</div>
+    <input id="search" class="search" type="search" placeholder="검색 (일본어, 한국어, 로마자)" value="${esc(L.q)}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="단어 검색">
+  </div>
+  <div id="list-body"></div>
+  <div class="list-foot"><button class="btn ghost" data-act="clear-wrong" ${Object.keys(store.wrong).length?'':'disabled'}>${S.clearArm ? '한 번 더 누르면 오답노트를 비워요' : '오답노트 비우기'}</button></div>`;
+  renderListBody();
+}
+function rowHTML(w){
+  const hidden = S.list.hide && !S.list.open.has(w.id), wc = wrongCount(w.id);
+  return `<li><div class="w-jp" lang="ja">${wordHTML(w)}</div>
+    ${hidden ? `<button class="w-kr reveal" data-act="reveal" data-v="${w.id}">눌러서 뜻 보기</button>` : `<div class="w-kr">${esc(w.kr)}${w.note ? `<small>${esc(w.note)}</small>` : ''}</div>`}
+    <div class="w-side">${wc ? `<span class="wbadge" title="오답노트 ${wc}회">✗${wc}</span>` : ''}${sayBtn(w)}</div></li>`;
+}
+function renderListBody(){
+  const L=S.list, body=document.getElementById('list-body'); if(!body) return;
+  let ws = WORDS.filter(w => (L.lesson==='all' || w.l===L.lesson) && (!L.kanjiOnly || hasKanji(w)) && (!L.wrongOnly || wrongCount(w.id)>0));
+  if(L.lesson==='all') ws = dedupe(ws);
+  const qv = L.q.trim();
+  if(qv){
+    const qk = normK(qv), qj = toHira(normJ(/[a-z]/i.test(qv) ? romaToHira(qv) : qv));
+    ws = ws.filter(w => normK(w.kr).includes(qk) || (qj && (toHira(normJ(w.jp)).includes(qj) || (w.r && toHira(normJ(w.r)).includes(qj)))));
+  }
+  body.innerHTML = ws.length
+    ? `<p class="list-n">${ws.length}개</p><ul class="wl">${ws.map(rowHTML).join('')}</ul>`
+    : `<p class="empty">${L.wrongOnly && !Object.keys(store.wrong).length ? '오답노트가 비어 있어요. 시험에서 틀린 단어가 여기에 모여요.' : '찾는 단어가 없어요. 검색어나 범위를 바꿔 보세요.'}</p>`;
+}
+
+/* ---------- 이벤트 ---------- */
+function render(){
+  if(S.screen==='quiz') renderQuiz();
+  else if(S.screen==='result') renderResult();
+  else if(S.screen==='list') renderList();
+  else renderHome();
+}
+function refocus(act, v){ const el = app.querySelector(`[data-act="${act}"][data-v="${v}"]`); if(el) el.focus({preventScroll:true}); }
+function toggleIn(arr, v, order){ const s=new Set(arr); s.has(v) ? s.delete(v) : s.add(v); return order.filter(x => s.has(x)); }
+
+app.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if(!el || el.disabled) return;
+  const act = el.dataset.act, v = el.dataset.v, st = store.settings;
+  switch(act){
+    case 'lesson': st.lessons = toggleIn(st.lessons, v, LESSONS.map(x=>x[0])); save(); renderHome(); refocus(act,v); break;
+    case 'dir': st.dirs = toggleIn(st.dirs, v, DIRS.map(x=>x[0])); save(); renderHome(); refocus(act,v); break;
+    case 'kanji': st.kanjiOnly = v==='kanji'; save(); renderHome(); refocus(act,v); break;
+    case 'mode': st.mode = v; save(); renderHome(); refocus(act,v); break;
+    case 'count': st.count = v; save(); renderHome(); refocus(act,v); break;
+    case 'start': startFromSettings(); break;
+    case 'start-wrong': startWrong(); break;
+    case 'open-list': S.screen='list'; S.list.open.clear(); S.clearArm=false; render(); scrollTop(); break;
+    case 'home': S.screen='home'; render(); scrollTop(); break;
+    case 'choose': answerChoice(+v); break;
+    case 'check': checkTyped(); break;
+    case 'skip': skip(); break;
+    case 'next': next(); break;
+    case 'override': override(); break;
+    case 'quit': quit(); break;
+    case 'say': sayWord(v); break;
+    case 'retry-wrong': retryWrong(); break;
+    case 'again': again(); break;
+    case 'l-lesson': S.list.lesson=v; renderList(); refocus(act,v); break;
+    case 'l-kanji': S.list.kanjiOnly=!S.list.kanjiOnly; renderList(); refocus(act,v); break;
+    case 'l-wrong': S.list.wrongOnly=!S.list.wrongOnly; renderList(); refocus(act,v); break;
+    case 'l-hide': S.list.hide=!S.list.hide; S.list.open.clear(); renderList(); refocus(act,v); break;
+    case 'reveal': S.list.open.add(v); renderListBody(); break;
+    case 'clear-wrong':
+      if(!S.clearArm){ S.clearArm=true; el.textContent='한 번 더 누르면 오답노트를 비워요'; setTimeout(() => { if(S.clearArm){ S.clearArm=false; if(S.screen==='list') renderList(); } }, 4000); }
+      else { store.wrong={}; save(); S.clearArm=false; renderList(); }
+      break;
+  }
+});
+app.addEventListener('change', e => {
+  if(e.target.dataset && e.target.dataset.act==='furigana'){ store.settings.furigana = e.target.checked; save(); }
+});
+app.addEventListener('input', e => {
+  if(e.target.id==='answer'){
+    const q=curQ(), cv=document.getElementById('conv'); if(!q || !cv) return;
+    cv.classList.remove('warn');
+    const v=e.target.value;
+    cv.innerHTML = (q.dir!=='jk' && /[a-z]/i.test(v)) ? `로마자 변환: <span lang="ja">${esc(romaToHira(v))}</span>` : '';
+  } else if(e.target.id==='search'){ S.list.q = e.target.value; renderListBody(); }
+});
+document.addEventListener('keydown', e => {
+  if(S.screen!=='quiz') return;
+  const q=curQ(); if(!q) return;
+  if(e.target && e.target.id==='answer'){
+    if(e.key==='Enter' && !e.isComposing && e.keyCode!==229 && !q.result){ e.preventDefault(); checkTyped(); }
+    return;
+  }
+  if(!q.result && q.mode==='choice' && /^[1-5]$/.test(e.key)){ answerChoice(+e.key-1); }
+  else if(q.result && e.key==='Enter' && !(document.activeElement && document.activeElement.tagName==='BUTTON')){ e.preventDefault(); next(); }
+});
+if(canSpeak){ try { speechSynthesis.getVoices(); speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', () => {}); } catch(e) {} }
+
+render();
+
+/* 오프라인에서도 열리도록 (GitHub Pages 등에 올렸을 때만 동작) */
+try {
+  if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+  }
+} catch(e) {}
+
+window.__tango = {WORDS, romaToHira, grade, buildPool, korVariants, coreTokens, rubyHTML, makeTraps, S, store};
+})();
+</script>
+</body>
+</html>
