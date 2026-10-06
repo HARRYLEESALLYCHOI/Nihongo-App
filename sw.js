@@ -1,6 +1,6 @@
 // 단어를 고치거나 추가한 뒤에는 아래 버전 숫자를 하나 올려 주세요 (v1 → v2).
 // 그래야 이미 설치한 폰에도 새 내용이 반영돼요.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = 'tango-' + VERSION;
 const FONT_CACHE = 'tango-fonts';
 const ASSETS = [
